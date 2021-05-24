@@ -6,6 +6,7 @@
 "Core/Src/Display/GUI/Fonts/font24.o"
 "Core/Src/Display/GUI/Fonts/font24CN.o"
 "Core/Src/Display/GUI/Fonts/font8.o"
+"Core/Src/Display/GUI/GUI_MainFrame.o"
 "Core/Src/Display/GUI/GUI_Paint.o"
 "Core/Src/Display/Image/ImageData.o"
 "Core/Src/Display/eInk_config/DEV_Config.o"

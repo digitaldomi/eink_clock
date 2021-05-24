@@ -95,7 +95,7 @@
                                     									
                                     <listOptionValue builtIn="false" value="../Core/Src/Display"/>
                                     									
-                                    <listOptionValue builtIn="false" value="../Core/Src/Display/Fonts"/>
+                                    <listOptionValue builtIn="false" value="../Core/Src/Display/GUI/Fonts"/>
                                     									
                                     <listOptionValue builtIn="false" value="../Core/Src/Display/Image"/>
                                     								
@@ -347,6 +347,20 @@
         	
     </storageModule>
     	
-    <storageModule moduleId="refreshScope"/>
+    <storageModule moduleId="refreshScope" versionNumber="2">
+        		
+        <configuration configurationName="Debug">
+            			
+            <resource resourceType="PROJECT" workspacePath="/eInkProject"/>
+            		
+        </configuration>
+        		
+        <configuration configurationName="Release">
+            			
+            <resource resourceType="PROJECT" workspacePath="/eInkProject"/>
+            		
+        </configuration>
+        	
+    </storageModule>
     
 </cproject>

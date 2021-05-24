@@ -12,6 +12,9 @@
 #include "stm32l4xx_hal_rtc.h"
 #include "main.h"
 
+extern uint8_t drawTimeNow;
+extern uint8_t drawTimeNowFullRedraw;
+extern uint8_t drawDateNow;
 
 void Time_Init();
 

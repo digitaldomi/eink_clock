@@ -54,17 +54,17 @@ int EPD_2in13_V2_test(void)
     printf("Paint_NewImage\r\n");
     Paint_NewImage(BlackImage, EPD_2IN13_V2_WIDTH, EPD_2IN13_V2_HEIGHT, 270, WHITE);
     Paint_SelectImage(BlackImage);
-    //Paint_SetMirroring(MIRROR_HORIZONTAL); //
-    Paint_SetMirroring(MIRROR_VERTICAL); //
+    Paint_SetMirroring(MIRROR_HORIZONTAL); //
+    //Paint_SetMirroring(MIRROR_VERTICAL); //
     Paint_Clear(WHITE);
 
 
-#if 0   //show image for array
+#if 1   //show image for array
     printf("show image for array\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
-    //Paint_DrawBitMap(gImage_2in13);
-    Paint_DrawBitMap(myImage);
+    Paint_DrawBitMap(gImage_2in13);
+    //Paint_DrawBitMap(myImage);
 
     EPD_2IN13_V2_Display(BlackImage);
     DEV_Delay_ms(3000);
@@ -141,8 +141,9 @@ int EPD_2in13_V2_test(void)
         Paint_DrawTime(20, 80, &sPaint_time, &Font24, WHITE, BLACK);
 
         RTC_DateTypeDef sDate;
-        HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
     	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+    	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
     	rtctime.Hour = sTime.Hours;
     	rtctime.Min = sTime.Minutes;

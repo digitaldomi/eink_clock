@@ -25,7 +25,7 @@
 
 #include "Display/eInk_config/EPD_Test.h"
 #include "DateTime/TimeKeeping.h"
-
+#include "GUI/GUI_MainFrame.h"
 
 
 /* USER CODE END Includes */
@@ -103,9 +103,11 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
-
+  //EPD_2in13_V2_test();
+  HAL_RTC_DeactivateAlarm(&hrtc, RTC_ALARM_A); //Wait with alarm until display is ready
+  Init_GUI();
   Time_Init();
-  EPD_2in13_V2_test();
+  //EPD_2in13_V2_test();
 
 
   //EPD_2in13_V2_test();
@@ -124,8 +126,18 @@ int main(void)
 	  //HAL_Delay(300);
 	  //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
-
-
+	  HAL_Delay(50);
+	  if(drawTimeNow){
+		  drawTimeNow = 0;
+		  if(drawTimeNowFullRedraw == 0){
+			  GUI_DrawTime(0);
+		  }else{
+			  drawTimeNowFullRedraw = 0;
+			  GUI_DrawTime(1);
+		  }
+	  }else if(drawDateNow){
+		  GUI_DrawDate();
+	  }
 
 
   }
@@ -248,13 +260,13 @@ static void MX_RTC_Init(void)
   }
   /** Enable the Alarm A
   */
-  sAlarm.AlarmTime.Hours = 0;
-  sAlarm.AlarmTime.Minutes = 0;
-  sAlarm.AlarmTime.Seconds = 7;
+  sAlarm.AlarmTime.Hours = 1;
+  sAlarm.AlarmTime.Minutes = 2;
+  sAlarm.AlarmTime.Seconds = 3;
   sAlarm.AlarmTime.SubSeconds = 0;
   sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  sAlarm.AlarmMask = RTC_ALARMMASK_NONE;
+  sAlarm.AlarmMask = RTC_ALARMMASK_ALL;
   sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
   sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
   sAlarm.AlarmDateWeekDay = 1;
