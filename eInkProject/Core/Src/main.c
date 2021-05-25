@@ -136,7 +136,7 @@ int main(void)
 			  GUI_DrawTime(1);
 		  }
 	  }else if(drawDateNow){
-		  GUI_DrawDate();
+		  GUI_DrawDate(1);
 	  }
 
 

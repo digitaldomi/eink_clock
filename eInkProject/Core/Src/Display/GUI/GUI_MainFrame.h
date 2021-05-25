@@ -16,6 +16,6 @@
 
 void Init_GUI();
 void GUI_DrawTime(uint8_t full_redraw);
-void GUI_DrawDate();
+void GUI_DrawDate(uint8_t print_weekday);
 
 #endif /* SRC_DISPLAY_GUI_GUI_MAINFRAME_H_ */

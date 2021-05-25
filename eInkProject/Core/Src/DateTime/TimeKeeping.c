@@ -39,11 +39,12 @@ void RTC_AlarmCallback(){
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); //Dummy read for valid time values
 
-	uint8_t next_second = sTime.Seconds+=seconds_interval; //Max 59 second intervals
+	uint8_t next_second = sTime.Seconds+seconds_interval; //Max 59 second intervals
 
 	if (next_second >= 60) {
 		sAlarm.AlarmTime.Minutes = sAlarm.AlarmTime.Minutes + 1;
-		sAlarm.AlarmTime.Seconds = next_second - 60;
+		next_second-=60; //subtract 60s
+		sAlarm.AlarmTime.Seconds = next_second;
 		if (sAlarm.AlarmTime.Minutes == 60) {
 			sAlarm.AlarmTime.Hours =  sAlarm.AlarmTime.Hours + 1;
 			sAlarm.AlarmTime.Minutes = 0;
@@ -69,9 +70,9 @@ void RTC_AlarmCallback(){
 	}
 
 	//Refresh Time
-	//GUI_DrawTime();
-	if((sTime.Seconds)%10 == 0 ){
-		if(sTime.Seconds == 0){
+	//GUI_DrawTime(); every minute
+	if(next_second == 0 ){
+		if(sTime.Seconds == 0){ //once every minute
 			drawTimeNowFullRedraw = 1;
 		}
 		drawTimeNow = 1;
@@ -79,7 +80,7 @@ void RTC_AlarmCallback(){
 
 	//Refresh Date
 	if(sTime.Hours == 0 && sTime.Minutes == 0 && sTime.Seconds == 0){
-		drawDateNow;
+		drawDateNow = 1;
 	}
 
 
