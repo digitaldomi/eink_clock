@@ -79,7 +79,12 @@ void GUI_DrawTime(uint8_t full_redraw){
 	Paint_ClearWindows(125, 50, 125 + Font24.Width * 7, 50 + Font24.Height, WHITE);
 	Paint_DrawTime(125, 50, &alarmtime, &Font24, WHITE, BLACK);*/
 
-	EPD_2IN13_V2_DisplayPart(BlackImage);
+	if(full_redraw){
+		full_redraw = 0;
+		EPD_2IN13_V2_Display(BlackImage);
+	}else{
+		EPD_2IN13_V2_DisplayPart(BlackImage);
+	}
 
 	EPD_2IN13_V2_Sleep(); //Put display to sleep...
 

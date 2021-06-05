@@ -34,7 +34,7 @@ void RTC_AlarmCallback(){
 	uint8_t seconds_interval = 1;
 	if(seconds_interval > 59) seconds_interval = 59; //No bigger than 59 seconds
 
-	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN); //Dummy read for valid time values

@@ -20,6 +20,7 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Core/Src/DCF77 \
 Core/Src/DateTime \
 Core/Src/Display/GUI/Fonts \
 Core/Src/Display/GUI \

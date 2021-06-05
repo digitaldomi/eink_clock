@@ -26,6 +26,7 @@
 #include "Display/eInk_config/EPD_Test.h"
 #include "DateTime/TimeKeeping.h"
 #include "GUI/GUI_MainFrame.h"
+#include "DCF77/DCF77.h"
 
 
 /* USER CODE END Includes */
@@ -109,9 +110,28 @@ int main(void)
   Time_Init();
   //EPD_2in13_V2_test();
 
+  DCF77_Init();
 
   //EPD_2in13_V2_test();
 
+
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+  HAL_Delay(300);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+  HAL_Delay(300);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+  HAL_Delay(300);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+
+
+  uint8_t index;
+  uint8_t dcf_values[60];
+  uint8_t dcf_old;
+  uint8_t dcf_new;
+
+  uint32_t tick_old;
+  uint32_t tick_new;
+  uint32_t tick_printtime;
 
   /* USER CODE END 2 */
 
@@ -126,7 +146,8 @@ int main(void)
 	  //HAL_Delay(300);
 	  //HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
-	  HAL_Delay(50);
+	  /*
+	  //HAL_Delay(50);
 	  if(drawTimeNow){
 		  drawTimeNow = 0;
 		  if(drawTimeNowFullRedraw == 0){
@@ -138,6 +159,111 @@ int main(void)
 	  }else if(drawDateNow){
 		  GUI_DrawDate(1);
 	  }
+	  */
+
+	  //Show DCF77 signal here lel
+	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, HAL_GPIO_ReadPin(DCF77_DATA_GPIO_Port, DCF77_DATA_Pin));
+
+	  dcf_new = HAL_GPIO_ReadPin(DCF77_DATA_GPIO_Port, DCF77_DATA_Pin);
+	  if(dcf_new != dcf_old){
+		  tick_new = HAL_GetTick();
+		  uint32_t tick_delta = tick_new - tick_old;
+		  tick_old = tick_new;
+		  //edge detected
+		  if(dcf_new == 1){ //rising edge
+			  char text_re[30];
+			  sprintf(&text_re, "Rising edge after %dms\n", tick_delta);
+			  //HAL_UART_Transmit(&huart2, &text_re, strlen(text_re), 10);
+
+			  if(tick_delta > 1500){
+				  //new minute has started, there was a missing pulse
+				  char text_newminute[30];
+				  sprintf(&text_newminute, "NEW MINUTE STARTED (?) %dms\n", tick_delta);
+				  HAL_UART_Transmit(&huart2, &text_newminute, strlen(text_newminute), 10);
+				  index = 0;
+
+
+
+				  //PRINT TIME UNTIL NOW...
+				  uint8_t minute =    dcf_values[21]*1 +
+									  dcf_values[22]*2 +
+									  dcf_values[23]*4 +
+									  dcf_values[24]*8 +
+									  dcf_values[25]*10 +
+									  dcf_values[26]*20 +
+									  dcf_values[27]*40;
+
+				  uint8_t hour =   	  dcf_values[29]*1 +
+									  dcf_values[30]*2 +
+									  dcf_values[31]*4 +
+									  dcf_values[32]*8 +
+									  dcf_values[33]*10 +
+									  dcf_values[34]*20;
+
+				  uint8_t day =  	  dcf_values[36]*1 +
+									  dcf_values[37]*2 +
+									  dcf_values[38]*4 +
+									  dcf_values[39]*8 +
+									  dcf_values[40]*10 +
+									  dcf_values[41]*20;
+
+				  uint8_t day_of_week = dcf_values[42]*1 +
+									  dcf_values[43]*2 +
+									  dcf_values[44]*4;
+
+				  uint8_t month =  	  dcf_values[45]*1 +
+									  dcf_values[46]*2 +
+									  dcf_values[47]*4 +
+									  dcf_values[48]*8 +
+									  dcf_values[49]*10;
+
+				  uint8_t year =  	  dcf_values[50]*1 +
+									  dcf_values[51]*2 +
+									  dcf_values[52]*4 +
+									  dcf_values[53]*8 +
+									  dcf_values[54]*10 +
+									  dcf_values[55]*20 +
+									  dcf_values[56]*40 +
+									  dcf_values[57]*80;
+
+				  char datetimetext[100];
+				  sprintf(&datetimetext, "%d.%d.%d (%d) %d:%d\n\n",
+						  year, month, day, day_of_week, hour, minute
+				  );
+				  HAL_UART_Transmit(&huart2, &datetimetext, strlen(datetimetext), 30);
+
+
+			  }else{
+				  //valid data here...
+
+			  }
+
+
+		  }else{ //falling edge
+			  char text_fe[30];
+			  //sprintf(&text_fe, "Falling edge after %dms\n", tick_delta);
+			  HAL_UART_Transmit(&huart2, &text_fe, strlen(text_fe), 10);
+
+
+			  if(tick_delta < 150){ //short pulse -> 0
+				  dcf_values[index] = 0;
+				  sprintf(&text_fe, "Index %d, 0\n", index);
+				  //HAL_UART_Transmit(&huart2, &text_fe, strlen(text_fe), 10);
+			  }else if(tick_delta < 250){ //long pulse -> 1
+				  dcf_values[index] = 1;
+				  sprintf(&text_fe, "Index %d, 1\n", index);
+				  //HAL_UART_Transmit(&huart2, &text_fe, strlen(text_fe), 10);
+			  }else{
+				  sprintf(&text_fe, "ERROR! TOO LONG HIGH %d\n", index);
+				  HAL_UART_Transmit(&huart2, &text_fe, strlen(text_fe), 10);
+			  }
+			  index++;
+
+		  }
+
+	  }
+	  dcf_old = dcf_new;
+
 
 
   }
@@ -380,6 +506,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(EINK_RST_GPIO_Port, EINK_RST_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(DCF77_EN_GPIO_Port, DCF77_EN_Pin, GPIO_PIN_SET);
+
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
@@ -412,6 +541,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(EINK_RST_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DCF77_EN_Pin */
+  GPIO_InitStruct.Pin = DCF77_EN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(DCF77_EN_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DCF77_DATA_Pin */
+  GPIO_InitStruct.Pin = DCF77_DATA_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(DCF77_DATA_GPIO_Port, &GPIO_InitStruct);
 
 }
 

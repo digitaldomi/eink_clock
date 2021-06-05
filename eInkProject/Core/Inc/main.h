@@ -78,6 +78,10 @@ void Error_Handler(void);
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define DCF77_EN_Pin GPIO_PIN_10
+#define DCF77_EN_GPIO_Port GPIOC
+#define DCF77_DATA_Pin GPIO_PIN_11
+#define DCF77_DATA_GPIO_Port GPIOC
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */

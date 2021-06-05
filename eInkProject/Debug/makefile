@@ -16,6 +16,7 @@ RM := rm -rf
 -include Core/Src/Display/GUI/Fonts/subdir.mk
 -include Core/Src/Display/GUI/subdir.mk
 -include Core/Src/DateTime/subdir.mk
+-include Core/Src/DCF77/subdir.mk
 -include Core/Src/subdir.mk
 -include subdir.mk
 -include objects.mk

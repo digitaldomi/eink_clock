@@ -1,3 +1,4 @@
+"Core/Src/DCF77/DCF77.o"
 "Core/Src/DateTime/TimeKeeping.o"
 "Core/Src/Display/GUI/Fonts/font12.o"
 "Core/Src/Display/GUI/Fonts/font12CN.o"
